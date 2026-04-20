@@ -1,0 +1,264 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Microsoft YaHei UI", "Microsoft YaHei", Arial, sans-serif;
+  background: linear-gradient(135deg, #eef2f7, #e2ebf5);
+  color: #0f172a;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 18px;
+}
+
+.header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+}
+
+.header p {
+  margin: 0 0 14px;
+  color: #475569;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.top-row {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #d8e4f0;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.control,
+.video {
+  min-height: 560px;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+}
+
+.video {
+  display: flex;
+  flex-direction: column;
+}
+
+.drive-layout {
+  display: grid;
+  grid-template-columns: 100px 100px 100px 80px 150px 150px;
+  gap: 10px;
+  align-items: stretch;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.drive-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 350px;
+}
+
+.drive-col.offset-down {
+  padding-top: 110px;
+}
+
+.drive-col.speed-col {
+  align-items: center;
+}
+
+.drive-col.action-col label {
+  display: grid;
+  gap: 6px;
+}
+
+.drive-btn,
+.field-group button,
+#toggleReceiverBtn {
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #0ea5e9, #0284c7);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 42px;
+  transition: transform 0.05s ease;
+}
+
+.drive-btn:active,
+.field-group button:active,
+#toggleReceiverBtn:active {
+  transform: translateY(1px);
+}
+
+.drive-btn.lg {
+  min-height: 100px;
+  font-size: 42px;
+}
+
+.drive-btn.md {
+  min-height: 100px;
+  font-size: 36px;
+}
+
+.drive-btn.tile {
+  min-height: 100px;
+  font-size: 24px;
+}
+
+.vertical-slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 36px;
+  min-height: 300px;
+}
+
+.mini-title {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.drive-col strong {
+  color: #0369a1;
+  font-size: 15px;
+}
+
+.control-status {
+  margin-top: auto;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.video img {
+  width: 100%;
+  min-height: 330px;
+  max-height: 520px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  object-fit: contain;
+}
+
+.network-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 0.9fr 0.8fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.side .field-group {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 0;
+}
+
+.field-group h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.field-group label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.field-group input[type="text"],
+.field-group input[type="number"] {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.field-group .inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.status p {
+  margin: 4px 0;
+}
+
+.toast {
+  min-height: 20px;
+  color: #b91c1c;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+@media (max-width: 1200px) {
+  .top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .network-row {
+    grid-template-columns: 1fr;
+  }
+
+  .control,
+  .video {
+    min-height: unset;
+  }
+
+  .drive-layout {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+
+  .drive-col {
+    min-height: unset;
+  }
+
+  .drive-col.offset-down {
+    padding-top: 0;
+  }
+
+  .drive-btn.lg,
+  .drive-btn.md,
+  .drive-btn.tile {
+    min-height: 72px;
+    font-size: 28px;
+  }
+
+  .vertical-slider {
+    writing-mode: horizontal-tb;
+    direction: ltr;
+    min-height: unset;
+    width: 100%;
+  }
+}

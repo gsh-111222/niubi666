@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>万向灵蛇 Web 控制台</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <h1>万向灵蛇 Web 控制台</h1>
+      <p>浏览器实时控制 + UDP 视频预览</p>
+    </header>
+
+    <main class="layout">
+      <div class="top-row">
+        <section class="card control">
+          <h2>行驶控制</h2>
+          <div class="drive-layout">
+          <div class="drive-col offset-down">
+            <button class="drive-btn lg" data-action="left_press" data-stop-on-release="true">◀</button>
+          </div>
+
+          <div class="drive-col">
+            <button class="drive-btn md" data-action="forward_press" data-stop-on-release="true">▲</button>
+            <button class="drive-btn md" data-action="back_press" data-stop-on-release="true">▼</button>
+          </div>
+
+          <div class="drive-col offset-down">
+            <button class="drive-btn lg" data-action="right_press" data-stop-on-release="true">▶</button>
+          </div>
+
+          <div class="drive-col speed-col">
+            <label class="mini-title">速度</label>
+            <input id="speedSlider" class="vertical-slider" type="range" min="0" max="99" step="1">
+            <strong id="speedText">0</strong>
+          </div>
+
+          <div class="drive-col action-col">
+            <button class="drive-btn tile" data-action="restore">重置</button>
+            <button class="drive-btn tile" data-action="turn_left" data-stop-on-release="true">左转</button>
+            <label>
+              <span class="mini-title">角度1</span>
+              <input id="angle1Slider" type="range" min="20" max="100" step="1">
+              <strong id="angle1Text">0</strong>
+            </label>
+          </div>
+
+          <div class="drive-col action-col">
+            <button class="drive-btn tile" id="toggleModeBtn">模式</button>
+            <button class="drive-btn tile" data-action="turn_right" data-stop-on-release="true">右转</button>
+            <label>
+              <span class="mini-title">角度2</span>
+              <input id="angle2Slider" type="range" min="20" max="100" step="1">
+              <strong id="angle2Text">0</strong>
+            </label>
+          </div>
+          </div>
+
+          <div class="control-status">
+            <p>当前模式：<span id="modeText">-</span></p>
+          </div>
+        </section>
+
+        <section class="card video">
+          <h2>实时画面</h2>
+          <img id="videoFeed" src="/video_feed" alt="视频流画面">
+        </section>
+      </div>
+
+      <aside class="card side">
+        <h2>网络与状态</h2>
+
+        <div class="network-row">
+          <div class="field-group">
+            <h3>本机监听</h3>
+            <label>本机 IP <input id="bindIp" type="text"></label>
+            <label>端口 <input id="bindPort" type="number" min="1" max="65535"></label>
+            <label class="inline">
+              <input id="autoPeer" type="checkbox" checked>
+              收包时自动更新对端
+            </label>
+          </div>
+
+          <div class="field-group">
+            <h3>下位机地址</h3>
+            <label>设备 IP <input id="peerIp" type="text" placeholder="例如 192.168.4.1"></label>
+            <label>设备端口 <input id="peerPort" type="number" min="1" max="65535" placeholder="例如 8888"></label>
+            <button id="applyPeerBtn">应用对端</button>
+          </div>
+
+          <div class="field-group">
+            <h3>接收控制</h3>
+            <button id="toggleReceiverBtn">开启接收</button>
+          </div>
+
+          <div class="status">
+            <p>对端：<span id="peerText">-</span></p>
+            <p>接收：<span id="receiverText">-</span></p>
+          </div>
+        </div>
+
+        <p id="toast" class="toast"></p>
+      </aside>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
