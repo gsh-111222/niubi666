@@ -184,6 +184,10 @@ body {
   font-size: 14px;
 }
 
+.field-group button + button {
+  margin-top: 8px;
+}
+
 .field-group label {
   display: grid;
   gap: 6px;
@@ -213,6 +217,12 @@ body {
 
 .status p {
   margin: 4px 0;
+}
+
+.backend-line {
+  margin: 8px 0 0;
+  color: #475569;
+  font-size: 13px;
 }
 
 .toast {

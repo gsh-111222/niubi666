@@ -14,8 +14,51 @@ const stateEls = {
   autoPeer: document.getElementById("autoPeer"),
   peerIp: document.getElementById("peerIp"),
   peerPort: document.getElementById("peerPort"),
+  apiBase: document.getElementById("apiBase"),
+  saveApiBaseBtn: document.getElementById("saveApiBaseBtn"),
+  resetApiBaseBtn: document.getElementById("resetApiBaseBtn"),
+  backendText: document.getElementById("backendText"),
+  videoFeed: document.getElementById("videoFeed"),
   toast: document.getElementById("toast"),
 };
+
+const API_BASE_STORAGE_KEY = "snake_api_base";
+
+function normalizeApiBase(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return "";
+  return value.replace(/\/+$/, "");
+}
+
+function getApiBase() {
+  const fromQuery = new URLSearchParams(window.location.search).get("api");
+  if (fromQuery) {
+    const base = normalizeApiBase(fromQuery);
+    if (base) {
+      localStorage.setItem(API_BASE_STORAGE_KEY, base);
+      return base;
+    }
+  }
+  return normalizeApiBase(localStorage.getItem(API_BASE_STORAGE_KEY));
+}
+
+let apiBase = getApiBase();
+
+function buildUrl(path) {
+  return apiBase ? `${apiBase}${path}` : path;
+}
+
+function renderBackendInfo() {
+  if (stateEls.apiBase) {
+    stateEls.apiBase.value = apiBase;
+  }
+  if (stateEls.backendText) {
+    stateEls.backendText.textContent = apiBase || "同源（当前域名）";
+  }
+  if (stateEls.videoFeed) {
+    stateEls.videoFeed.src = buildUrl("/video_feed");
+  }
+}
 
 function setToast(msg, isError = false) {
   stateEls.toast.textContent = msg || "";
@@ -23,7 +66,7 @@ function setToast(msg, isError = false) {
 }
 
 async function api(path, body) {
-  const res = await fetch(path, {
+  const res = await fetch(buildUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body || {}),
@@ -60,7 +103,7 @@ function renderState(state) {
 }
 
 async function refreshState() {
-  const res = await fetch("/api/state");
+  const res = await fetch(buildUrl("/api/state"));
   const state = await res.json();
   renderState(state);
 }
@@ -95,6 +138,39 @@ function bindActionButtons() {
 }
 
 function bindControls() {
+  if (stateEls.saveApiBaseBtn) {
+    stateEls.saveApiBaseBtn.addEventListener("click", async () => {
+      const nextBase = normalizeApiBase(stateEls.apiBase.value);
+      apiBase = nextBase;
+      if (nextBase) {
+        localStorage.setItem(API_BASE_STORAGE_KEY, nextBase);
+      } else {
+        localStorage.removeItem(API_BASE_STORAGE_KEY);
+      }
+      renderBackendInfo();
+      try {
+        await refreshState();
+        setToast("后端地址已更新");
+      } catch (err) {
+        setToast(`后端连接失败：${err.message}`, true);
+      }
+    });
+  }
+
+  if (stateEls.resetApiBaseBtn) {
+    stateEls.resetApiBaseBtn.addEventListener("click", async () => {
+      apiBase = "";
+      localStorage.removeItem(API_BASE_STORAGE_KEY);
+      renderBackendInfo();
+      try {
+        await refreshState();
+        setToast("已恢复同源后端");
+      } catch (err) {
+        setToast(`连接失败：${err.message}`, true);
+      }
+    });
+  }
+
   document.getElementById("toggleModeBtn").addEventListener("click", async () => {
     try {
       const data = await api("/api/mode");
@@ -164,6 +240,7 @@ function bindControls() {
 }
 
 async function bootstrap() {
+  renderBackendInfo();
   bindActionButtons();
   bindControls();
   await refreshState();

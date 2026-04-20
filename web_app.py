@@ -5,6 +5,7 @@ import time
 from typing import Optional
 
 from flask import Flask, Response, jsonify, render_template, request
+from flask_cors import CORS
 from PIL import Image
 
 from snake_backend import (
@@ -107,6 +108,7 @@ class UdpVideoService:
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}, r"/video_feed": {"origins": "*"}})
 controller = SnakeUdpController()
 video_service = UdpVideoService(controller)
 
