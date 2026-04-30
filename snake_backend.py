@@ -13,7 +13,7 @@ from PIL import Image
 DEFAULT_PACKET: List[int] = [0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3C, 0xFE]
 
 # 下位机地址在首次收到 UDP 数据时由 set_peer 自动记录，无需预设 IP/端口
-DEFAULT_BIND_IP = "172.20.10.4"
+DEFAULT_BIND_IP = "192.168.127.10"
 DEFAULT_BIND_PORT = 9090
 
 
@@ -59,7 +59,24 @@ class SnakeUdpController:
         self.packet[3] = 0x00
         self.packet[4] = 0x00
         self.packet[5] = 0x00
-        self.send()
+        try:
+            self.send()
+        except:
+            pass
+
+    def motor2_stop(self) -> None:
+        if self.mode == "snake":
+            pass
+        else:
+            self.packet[2] = 0x00
+            self.packet[3] = 0x00
+            self.packet[4] = 0x00
+            self.packet[5] = 0x00
+            try:
+                self.send()
+            except:
+                pass
+
 
     def btn_left_press(self) -> None:
         s = self._speed_byte()
@@ -131,30 +148,42 @@ class SnakeUdpController:
             pass
 
     def turn_left_fixed(self):
-        if self.mode == "car":
-            self.packet[2] = (self.packet[2] & 0x7F) | 0x1E
-            self.packet[3] = (self.packet[3] & 0x7F) | 0x1E
-            self.packet[4] = (self.packet[4] | 0x80) | 0x1E
-            self.packet[5] = (self.packet[5] | 0x80) | 0x1E
+        if self.mode != "car":
+            self.packet[1] = self.packet[1] | 0x02
+            try:
+                self.send()
+            except:
+                pass
+            self.packet[1] = self.packet[1] & 0xFD
         else:
-            self.packet[1] = (self.packet[1] | 0x3c) & 0x7E
-        try:
-            self.send()
-        except:
-            pass
+            s = self._speed_byte()
+            self.packet[2] = (self.packet[2] & 0x7F) | s
+            self.packet[3] = (self.packet[3] & 0x7F) | s
+            self.packet[4] = (self.packet[4] & 0x7F) | s
+            self.packet[5] = (self.packet[5] & 0x7F) | s
+            try:
+                self.send()
+            except:
+                pass
 
     def turn_right_fixed(self):
-        if self.mode == "car":
-            self.packet[2] = (self.packet[2] | 0x80) | 0x1E
-            self.packet[3] = (self.packet[3] | 0x80) | 0x1E
-            self.packet[4] = (self.packet[4] & 0x7F) | 0x1E
-            self.packet[5] = (self.packet[5] & 0x7F) | 0x1E
+        if self.mode != "car":
+            self.packet[1] = self.packet[1] | 0x01
+            try:
+                self.send()
+            except:
+                pass
+            self.packet[1] = self.packet[1] & 0xFE
         else:
-            self.packet[1] = (self.packet[1] | 0x3c) | 0x80
-        try:
-            self.send()
-        except:
-            pass
+            s = self._speed_byte()
+            self.packet[2] = (self.packet[2] | 0x80) | s
+            self.packet[3] = (self.packet[3] | 0x80) | s
+            self.packet[4] = (self.packet[4] | 0x80) | s
+            self.packet[5] = (self.packet[5] | 0x80) | s
+            try:
+                self.send()
+            except:
+                pass
 
     def restore(self) -> None:
         if self.mode == "car":

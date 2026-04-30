@@ -30,6 +30,13 @@ function normalizeApiBase(raw) {
   return value.replace(/\/+$/, "");
 }
 
+function formatNetworkError(err) {
+  if (err instanceof TypeError) {
+    return "无法连接到该地址（网络不可达或后端未启动）";
+  }
+  return err.message || "请求失败";
+}
+
 function getApiBase() {
   const fromQuery = new URLSearchParams(window.location.search).get("api");
   if (fromQuery) {
@@ -140,6 +147,7 @@ function bindActionButtons() {
 function bindControls() {
   if (stateEls.saveApiBaseBtn) {
     stateEls.saveApiBaseBtn.addEventListener("click", async () => {
+      const prevBase = apiBase;
       const nextBase = normalizeApiBase(stateEls.apiBase.value);
       apiBase = nextBase;
       if (nextBase) {
@@ -152,7 +160,15 @@ function bindControls() {
         await refreshState();
         setToast("后端地址已更新");
       } catch (err) {
-        setToast(`后端连接失败：${err.message}`, true);
+        // 若新地址不可达，自动回退，避免页面后续一直 failed to fetch。
+        apiBase = prevBase;
+        if (prevBase) {
+          localStorage.setItem(API_BASE_STORAGE_KEY, prevBase);
+        } else {
+          localStorage.removeItem(API_BASE_STORAGE_KEY);
+        }
+        renderBackendInfo();
+        setToast(`后端连接失败，已回退：${formatNetworkError(err)}`, true);
       }
     });
   }
@@ -166,7 +182,7 @@ function bindControls() {
         await refreshState();
         setToast("已恢复同源后端");
       } catch (err) {
-        setToast(`连接失败：${err.message}`, true);
+        setToast(`连接失败：${formatNetworkError(err)}`, true);
       }
     });
   }
